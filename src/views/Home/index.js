@@ -1,9 +1,13 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
+
+import Feed from '~/components/Feed';
 import { useStore } from '~/store';
 
 function Home() {
     const [state] = useStore();
     const { user } = state;
+    const [typeFeed, setTypeFeed] = useState(user ? 'your' : 'global');
 
     const handleShowYourFeed = (e) => {};
     const handleShowGlobalFeed = (e) => {};
@@ -46,6 +50,7 @@ function Home() {
                                 </li>
                             </ul>
                         </div>
+                        <Feed typeFeed={typeFeed} />
 
                         <div className="article-preview">
                             <div className="article-meta">

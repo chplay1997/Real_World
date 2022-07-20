@@ -31,7 +31,7 @@ function LoginRegister() {
                         },
                     })
                     .then((response) => {
-                        // localStorage.setItem('jwtToken', response.data.user.token);
+                        localStorage.setItem('jwtToken', response.data.user.token);
                         localStorage.setItem('user', JSON.stringify(response.data.user));
                         dispatch(actions.setUser(response.data.user));
                         navigate('/');
