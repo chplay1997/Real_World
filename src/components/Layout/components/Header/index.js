@@ -1,36 +1,38 @@
+import { Link } from 'react-router-dom';
+
 function Header() {
     return (
-        <nav class="navbar navbar-light">
-            <div class="container">
-                <a class="navbar-brand" href="index.html">
+        <nav className="navbar navbar-light">
+            <div className="container">
+                <a className="navbar-brand" href="index.html">
                     conduit
                 </a>
-                <ul class="nav navbar-nav pull-xs-right">
-                    <li class="nav-item">
+                <ul className="nav navbar-nav pull-xs-right">
+                    <li className="nav-item">
                         {/* <!-- Add "active" class when you're on that page" --> */}
-                        <a class="nav-link active" href="">
+                        <Link to="/" className="nav-link active">
                             Home
-                        </a>
+                        </Link>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="">
-                            <i class="ion-compose"></i>&nbsp;New Article
-                        </a>
+                    <li className="nav-item">
+                        <Link to="/create" className="nav-link">
+                            <i className="ion-compose"></i>&nbsp;New Article
+                        </Link>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="">
-                            <i class="ion-gear-a"></i>&nbsp;Settings
-                        </a>
+                    <li className="nav-item">
+                        <Link to="/settings" className="nav-link">
+                            <i className="ion-gear-a"></i>&nbsp;Settings
+                        </Link>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="">
+                    <li className="nav-item">
+                        <Link to="/login" className="nav-link">
                             Sign in
-                        </a>
+                        </Link>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="">
+                    <li className="nav-item">
+                        <Link to="/register" className="nav-link">
                             Sign up
-                        </a>
+                        </Link>
                     </li>
                 </ul>
             </div>

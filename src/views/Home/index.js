@@ -1,4 +1,9 @@
+import { useContext } from 'react';
+import Context from '~/store/Context';
+
 function Home() {
+    const color = useContext(Context);
+    console.log(color);
     return (
         <div className="home-page">
             <div className="banner">
