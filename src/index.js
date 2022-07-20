@@ -1,19 +1,19 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from '~/App';
-import reportWebVitals from './reportWebVitals';
-import GlobalStyles from './components/GlobalStyles';
-import Context from './store/Context';
+import reportWebVitals from '~/reportWebVitals';
+import GlobalStyles from '~/components/GlobalStyles';
+import { StoreProvider } from '~/store';
 
 // const User = React.createContext();
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
     <React.StrictMode>
-        <Context.Provider value={{ color: 'red' }}>
+        <StoreProvider>
             <GlobalStyles>
                 <App />
             </GlobalStyles>
-        </Context.Provider>
+        </StoreProvider>
     </React.StrictMode>,
 );
 

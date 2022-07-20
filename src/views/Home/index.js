@@ -1,9 +1,13 @@
-import { useContext } from 'react';
-import Context from '~/store/Context';
+import { Link } from 'react-router-dom';
+import { useStore } from '~/store';
 
 function Home() {
-    const color = useContext(Context);
-    console.log(color);
+    const [state] = useStore();
+    const { user } = state;
+
+    const handleShowYourFeed = (e) => {};
+    const handleShowGlobalFeed = (e) => {};
+
     return (
         <div className="home-page">
             <div className="banner">
@@ -18,61 +22,73 @@ function Home() {
                     <div className="col-md-9">
                         <div className="feed-toggle">
                             <ul className="nav nav-pills outline-active">
+                                {user && (
+                                    <li className="nav-item">
+                                        <Link
+                                            className="nav-link active"
+                                            id="your-feed"
+                                            to=""
+                                            onClick={handleShowYourFeed}
+                                        >
+                                            Your Feed
+                                        </Link>
+                                    </li>
+                                )}
                                 <li className="nav-item">
-                                    <a className="nav-link disabled" href="">
-                                        Your Feed
-                                    </a>
-                                </li>
-                                <li className="nav-item">
-                                    <a className="nav-link active" href="">
+                                    <Link
+                                        className={`nav-link ${user ?? 'active'}`}
+                                        id="global-feed"
+                                        to=""
+                                        onClick={handleShowGlobalFeed}
+                                    >
                                         Global Feed
-                                    </a>
+                                    </Link>
                                 </li>
                             </ul>
                         </div>
 
                         <div className="article-preview">
                             <div className="article-meta">
-                                <a href="profile.html">
-                                    <img src="http://i.imgur.com/Qr71crq.jpg" />
-                                </a>
+                                <Link to="profile.html">
+                                    <img alt="" src="http://i.imgur.com/Qr71crq.jpg" />
+                                </Link>
                                 <div className="info">
-                                    <a href="" className="author">
+                                    <Link to="" className="author">
                                         Eric Simons
-                                    </a>
+                                    </Link>
                                     <span className="date">January 20th</span>
                                 </div>
                                 <button className="btn btn-outline-primary btn-sm pull-xs-right">
                                     <i className="ion-heart"></i> 29
                                 </button>
                             </div>
-                            <a href="" className="preview-link">
+                            <Link to="" className="preview-link">
                                 <h1>How to build webapps that scale</h1>
                                 <p>This is the description for the post.</p>
                                 <span>Read more...</span>
-                            </a>
+                            </Link>
                         </div>
 
                         <div className="article-preview">
                             <div className="article-meta">
-                                <a href="profile.html">
-                                    <img src="http://i.imgur.com/N4VcUeJ.jpg" />
-                                </a>
+                                <Link to="profile.html">
+                                    <img alt="" src="http://i.imgur.com/N4VcUeJ.jpg" />
+                                </Link>
                                 <div className="info">
-                                    <a href="" className="author">
+                                    <Link to="" className="author">
                                         Albert Pai
-                                    </a>
+                                    </Link>
                                     <span className="date">January 20th</span>
                                 </div>
                                 <button className="btn btn-outline-primary btn-sm pull-xs-right">
                                     <i className="ion-heart"></i> 32
                                 </button>
                             </div>
-                            <a href="" className="preview-link">
+                            <Link to="" className="preview-link">
                                 <h1>The song you won't ever stop singing. No matter how hard you try.</h1>
                                 <p>This is the description for the post.</p>
                                 <span>Read more...</span>
-                            </a>
+                            </Link>
                         </div>
                     </div>
 
@@ -81,30 +97,30 @@ function Home() {
                             <p>Popular Tags</p>
 
                             <div className="tag-list">
-                                <a href="" className="tag-pill tag-default">
+                                <Link to="" className="tag-pill tag-default">
                                     programming
-                                </a>
-                                <a href="" className="tag-pill tag-default">
+                                </Link>
+                                <Link to="" className="tag-pill tag-default">
                                     javascript
-                                </a>
-                                <a href="" className="tag-pill tag-default">
+                                </Link>
+                                <Link to="" className="tag-pill tag-default">
                                     emberjs
-                                </a>
-                                <a href="" className="tag-pill tag-default">
+                                </Link>
+                                <Link to="" className="tag-pill tag-default">
                                     angularjs
-                                </a>
-                                <a href="" className="tag-pill tag-default">
+                                </Link>
+                                <Link to="" className="tag-pill tag-default">
                                     react
-                                </a>
-                                <a href="" className="tag-pill tag-default">
+                                </Link>
+                                <Link to="" className="tag-pill tag-default">
                                     mean
-                                </a>
-                                <a href="" className="tag-pill tag-default">
+                                </Link>
+                                <Link to="" className="tag-pill tag-default">
                                     node
-                                </a>
-                                <a href="" className="tag-pill tag-default">
+                                </Link>
+                                <Link to="" className="tag-pill tag-default">
                                     rails
-                                </a>
+                                </Link>
                             </div>
                         </div>
                     </div>
