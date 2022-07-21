@@ -11,10 +11,9 @@ function Feed(props) {
             return;
         }
         const getData = async () => {
-            console.log(123);
             let target = '';
             let tag = '';
-            if (props.typeFeed == 'your') {
+            if (props.typeFeed === 'your') {
                 target = '/feed';
             }
             if (props.tag) {
