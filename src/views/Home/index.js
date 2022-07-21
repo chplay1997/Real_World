@@ -1,16 +1,40 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
 
 import Feed from '~/components/Feed';
-import { useStore } from '~/store';
+import { UserContext } from '~/store/UserProvider';
 
 function Home() {
-    const [state] = useStore();
-    const { user } = state;
-    const [typeFeed, setTypeFeed] = useState(user ? 'your' : 'global');
+    const context = useContext(UserContext);
+    const user = context.user;
 
-    const handleShowYourFeed = (e) => {};
-    const handleShowGlobalFeed = (e) => {};
+    const [typeFeed, setTypeFeed] = useState(user ? 'your' : 'global');
+    const [tag, setTag] = useState('');
+
+    //active btn
+    const active = (type) => {
+        if (typeFeed === type && !tag) {
+            return 'active';
+        }
+        return '';
+    };
+
+    const handleShowYourFeed = (e) => {
+        setTypeFeed('your');
+        setTag('');
+    };
+    const handleShowGlobalFeed = (e) => {
+        setTypeFeed('global');
+        setTag('');
+    };
+    const handleTagFeed = (e) => {
+        setTypeFeed('');
+        setTag('');
+    };
+    const handleShowTag = (e) => {
+        console.log(e.target.innerHTML);
+        setTag(e.target.innerHTML);
+    };
 
     return (
         <div className="home-page">
@@ -29,7 +53,7 @@ function Home() {
                                 {user && (
                                     <li className="nav-item">
                                         <Link
-                                            className="nav-link active"
+                                            className={`nav-link ${active('your')}`}
                                             id="your-feed"
                                             to=""
                                             onClick={handleShowYourFeed}
@@ -40,7 +64,7 @@ function Home() {
                                 )}
                                 <li className="nav-item">
                                     <Link
-                                        className={`nav-link ${user ?? 'active'}`}
+                                        className={`nav-link ${active('global')}`}
                                         id="global-feed"
                                         to=""
                                         onClick={handleShowGlobalFeed}
@@ -48,53 +72,21 @@ function Home() {
                                         Global Feed
                                     </Link>
                                 </li>
+                                {tag === '' || (
+                                    <li className="nav-item">
+                                        <Link
+                                            className={`nav-link ng-binding active`}
+                                            id="global-feed"
+                                            to=""
+                                            onClick={handleTagFeed}
+                                        >
+                                            <i className="ion-pound" /> {tag}
+                                        </Link>
+                                    </li>
+                                )}
                             </ul>
                         </div>
-                        <Feed typeFeed={typeFeed} />
-
-                        <div className="article-preview">
-                            <div className="article-meta">
-                                <Link to="profile.html">
-                                    <img alt="" src="http://i.imgur.com/Qr71crq.jpg" />
-                                </Link>
-                                <div className="info">
-                                    <Link to="" className="author">
-                                        Eric Simons
-                                    </Link>
-                                    <span className="date">January 20th</span>
-                                </div>
-                                <button className="btn btn-outline-primary btn-sm pull-xs-right">
-                                    <i className="ion-heart"></i> 29
-                                </button>
-                            </div>
-                            <Link to="" className="preview-link">
-                                <h1>How to build webapps that scale</h1>
-                                <p>This is the description for the post.</p>
-                                <span>Read more...</span>
-                            </Link>
-                        </div>
-
-                        <div className="article-preview">
-                            <div className="article-meta">
-                                <Link to="profile.html">
-                                    <img alt="" src="http://i.imgur.com/N4VcUeJ.jpg" />
-                                </Link>
-                                <div className="info">
-                                    <Link to="" className="author">
-                                        Albert Pai
-                                    </Link>
-                                    <span className="date">January 20th</span>
-                                </div>
-                                <button className="btn btn-outline-primary btn-sm pull-xs-right">
-                                    <i className="ion-heart"></i> 32
-                                </button>
-                            </div>
-                            <Link to="" className="preview-link">
-                                <h1>The song you won't ever stop singing. No matter how hard you try.</h1>
-                                <p>This is the description for the post.</p>
-                                <span>Read more...</span>
-                            </Link>
-                        </div>
+                        <Feed typeFeed={typeFeed} tag={tag} />
                     </div>
 
                     <div className="col-md-3">
@@ -102,28 +94,31 @@ function Home() {
                             <p>Popular Tags</p>
 
                             <div className="tag-list">
-                                <Link to="" className="tag-pill tag-default">
-                                    programming
+                                <Link to="" className="tag-pill tag-default" onClick={handleShowTag}>
+                                    implementations
                                 </Link>
-                                <Link to="" className="tag-pill tag-default">
-                                    javascript
+                                <Link to="" className="tag-pill tag-default" onClick={handleShowTag}>
+                                    introduction
                                 </Link>
-                                <Link to="" className="tag-pill tag-default">
-                                    emberjs
+                                <Link to="" className="tag-pill tag-default" onClick={handleShowTag}>
+                                    welcome
                                 </Link>
-                                <Link to="" className="tag-pill tag-default">
+                                <Link to="" className="tag-pill tag-default" onClick={handleShowTag}>
+                                    codebaseShow
+                                </Link>
+                                <Link to="" className="tag-pill tag-default" onClick={handleShowTag}>
                                     angularjs
                                 </Link>
-                                <Link to="" className="tag-pill tag-default">
+                                <Link to="" className="tag-pill tag-default" onClick={handleShowTag}>
                                     react
                                 </Link>
-                                <Link to="" className="tag-pill tag-default">
+                                <Link to="" className="tag-pill tag-default" onClick={handleShowTag}>
                                     mean
                                 </Link>
-                                <Link to="" className="tag-pill tag-default">
+                                <Link to="" className="tag-pill tag-default" onClick={handleShowTag}>
                                     node
                                 </Link>
-                                <Link to="" className="tag-pill tag-default">
+                                <Link to="" className="tag-pill tag-default" onClick={handleShowTag}>
                                     rails
                                 </Link>
                             </div>

@@ -1,11 +1,11 @@
+import { useContext } from 'react';
 import { Link } from 'react-router-dom';
-
-import { useStore } from '~/store';
+import { UserContext } from '~/store/UserProvider';
 
 function Header() {
-    const [state] = useStore();
-    const { user } = state;
-    //active
+    const context = useContext(UserContext);
+    const user = context.user;
+    //active btn
     const active = (type) => {
         let path = window.location.pathname.split('/')[1];
         if (path === type || (path === '' && type === 'home')) {

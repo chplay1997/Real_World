@@ -1,13 +1,12 @@
-import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { Link } from 'react-router-dom';
+import { useContext, useEffect, useState } from 'react';
+import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
 
-import { useStore } from '~/store';
+import { UserContext } from '~/store/UserProvider';
 
 function Profile() {
-    const [state] = useStore();
-    const { user } = state;
+    const context = useContext(UserContext);
+    const user = context.user;
     const { name } = useParams();
     const [profile, setProfile] = useState('');
     useEffect(() => {

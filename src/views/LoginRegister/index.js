@@ -1,11 +1,12 @@
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useContext, useState } from 'react';
 import axios from 'axios';
-import { useStore, actions } from '~/store';
+import { Link, useNavigate } from 'react-router-dom';
+
+import { UserContext } from '~/store/UserProvider';
 
 function LoginRegister() {
+    const context = useContext(UserContext);
     const navigate = useNavigate();
-    const [state, dispatch] = useStore();
 
     const [userName, setUserName] = useState('');
     const [email, setEmail] = useState('');
@@ -33,7 +34,7 @@ function LoginRegister() {
                     .then((response) => {
                         localStorage.setItem('jwtToken', response.data.user.token);
                         localStorage.setItem('user', JSON.stringify(response.data.user));
-                        dispatch(actions.setUser(response.data.user));
+                        context.setUser(response.data.user);
                         navigate('/');
                     })
                     .catch((err) => {

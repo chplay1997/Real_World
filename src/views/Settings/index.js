@@ -1,11 +1,12 @@
-import { useState } from 'react';
-import { useStore, actions } from '~/store';
+import { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+
+import { UserContext } from '~/store/UserProvider';
 
 function Settings() {
     const navigate = useNavigate();
-    const [state, dispatch] = useStore();
-    const { user } = state;
+    const context = useContext(UserContext);
+    const user = context.user;
 
     const [image, setImage] = useState('');
     const [username, setUsername] = useState(user ? user.username : '');
@@ -16,7 +17,7 @@ function Settings() {
     const handleLogOut = () => {
         localStorage.removeItem('jwtToken');
         localStorage.removeItem('user');
-        dispatch(actions.setUser(null));
+        context.setUser(null);
         navigate('/');
     };
     return (

@@ -1,25 +1,34 @@
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-import { useStore } from '~/store';
 
 function Feed(props) {
-    const [state] = useStore();
-    const { user } = state;
     const [listFeed, setListFeed] = useState([]);
+    let global = 'https://conduit.productionready.io/api/articles/feed?limit=10&offset=0';
+    let target = 'https://api.realworld.io/api/articles?limit=10&offset=0&tag=introduction';
     useEffect(() => {
         const getData = async () => {
-            const list = await axios.get('https://api.realworld.io/api/articles/feed?offset=0&limit=10', {
+            const jwtToken = localStorage.getItem('jwtToken');
+            let target = '';
+            let tag = '';
+            if (props.typeFeed == 'your') {
+                target = '/feed';
+            }
+            if (props.tag) {
+                tag = '&tag=' + props.tag;
+            }
+            const data = await axios.get(`https://api.realworld.io/api/articles${target}?offset=0&limit=10${tag}`, {
                 headers: {
                     'Content-type': '/application/json',
-                    authorization: 'Token ' + user.token,
+                    authorization: 'Token ' + jwtToken,
                 },
             });
-            console.log(list.data.articles);
-            setListFeed(list.data.articles);
+            console.log(data.data);
+            setListFeed(data.data.articles);
         };
         getData();
-    }, [props.typeFeed]);
+    }, [props.typeFeed, props.tag]);
+
     return (
         <>
             {listFeed.length === 0
