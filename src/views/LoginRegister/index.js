@@ -41,12 +41,7 @@ function LoginRegister() {
 
     //Handle on submit login or register
     const HanldeOnSubmit = (e) => {
-        const regexEmail =
-            // eslint-disable-next-line
-            /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/;
-
-        const regexPassword = /[a-zA-Z0-9]{8,}/;
-        if (email.match(regexEmail) && password.match(regexPassword)) {
+        if (context.isEmail(email) && context.isPassword(password)) {
             if (path === 'login') {
                 sendData(e, '/login');
             } else if (path === 'register') {
