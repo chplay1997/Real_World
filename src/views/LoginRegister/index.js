@@ -11,10 +11,35 @@ function LoginRegister() {
     const [userName, setUserName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [messages, setMessages] = useState('');
+    const [messages, setMessages] = useState([]);
     const [showMessage, setShowMessage] = useState(false);
 
     let path = window.location.pathname.split('/')[1];
+
+    //call api and send messages error
+    const sendData = (e, target, userName) => {
+        e.preventDefault();
+        axios
+            .post(`https://api.realworld.io/api/users${target}`, {
+                user: {
+                    username: userName,
+                    email: email,
+                    password: password,
+                },
+            })
+            .then((response) => {
+                localStorage.setItem('jwtToken', response.data.user.token);
+                localStorage.setItem('user', JSON.stringify(response.data.user));
+                context.setUser(response.data.user);
+                navigate('/');
+            })
+            .catch((err) => {
+                setMessages(Object.entries(err.response.data.errors));
+                setShowMessage(true);
+            });
+    };
+
+    //Handle on submit login or register
     const HanldeOnSubmit = (e) => {
         const regexEmail =
             // eslint-disable-next-line
@@ -23,45 +48,15 @@ function LoginRegister() {
         const regexPassword = /[a-zA-Z0-9]{8,}/;
         if (email.match(regexEmail) && password.match(regexPassword)) {
             if (path === 'login') {
-                e.preventDefault();
-                axios
-                    .post('https://api.realworld.io/api/users/login', {
-                        user: {
-                            email: email,
-                            password: password,
-                        },
-                    })
-                    .then((response) => {
-                        localStorage.setItem('jwtToken', response.data.user.token);
-                        localStorage.setItem('user', JSON.stringify(response.data.user));
-                        context.setUser(response.data.user);
-                        navigate('/');
-                    })
-                    .catch((err) => {
-                        console.log(err);
-                    });
-            } else if (path === 'register' && userName.trim().length > 1) {
-                e.preventDefault();
-                axios
-                    .post('https://api.realworld.io/api/users', {
-                        user: {
-                            username: userName,
-                            email: email,
-                            password: password,
-                        },
-                    })
-                    .then((response) => {
-                        console.log(response);
-                    })
-                    .catch((err) => {
-                        console.log(err);
-                    });
+                sendData(e, '/login');
+            } else if (path === 'register') {
+                sendData(e, '', userName);
             } else {
-                setMessages('User name is invalid');
+                e.preventDefault();
                 setShowMessage(true);
             }
         } else {
-            setMessages('Email or password is invalid');
+            setMessages([['Username or password', [' is valid!']]]);
             setShowMessage(true);
         }
     };
@@ -74,15 +69,17 @@ function LoginRegister() {
                         <h1 className="text-xs-center">{path === 'login' ? 'Sign in' : 'Sign up'}</h1>
                         <p className="text-xs-center">
                             {path === 'login' ? (
-                                <Link to={'/register'}>{'Have an account?'}</Link>
+                                <Link to={'/register'}>{'Need an account?'}</Link>
                             ) : (
-                                <Link to={'/login'}>{'Need an account?'}</Link>
+                                <Link to={'/login'}>{'Have an account?'}</Link>
                             )}
                         </p>
 
                         {showMessage && (
                             <ul className="error-messages">
-                                <li>{messages}</li>
+                                {messages.map((mes, index) => (
+                                    <li key={index}>{mes[0] + ' ' + mes[1]}</li>
+                                ))}
                             </ul>
                         )}
 
