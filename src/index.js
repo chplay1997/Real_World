@@ -6,6 +6,7 @@ import GlobalStyles from '~/components/GlobalStyles';
 import { UserProvider } from '~/store/UserProvider';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
+
 root.render(
     <React.StrictMode>
         <UserProvider>

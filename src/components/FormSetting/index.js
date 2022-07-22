@@ -1,6 +1,6 @@
 import { useContext, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { Link, useNavigate } from 'react-router-dom';
 
 import { UserContext } from '~/store/UserProvider';
 
@@ -9,43 +9,72 @@ function FormSetting() {
     const context = useContext(UserContext);
     const user = context.user;
 
-    const [image, setImage] = useState('');
-    const [username, setUsername] = useState(user ? user.username : '');
-    const [bio, setBio] = useState(user ? user.bio : '');
-    const [email, setEmail] = useState(user ? user.email : '');
+    const [image, setImage] = useState(user.image || '');
+    const [username, setUsername] = useState(user.username);
+    const [bio, setBio] = useState(user.bio || '');
+    const [email, setEmail] = useState(user.email);
     const [password, setPassword] = useState('');
+
     const [messages, setMessages] = useState([]);
     const [showMessage, setShowMessage] = useState(false);
 
     const handleUpdateUser = (e) => {
         e.preventDefault();
-        if (context.isEmail(email) && context.isPassword(password)) {
-            axios
-                .put(`https://api.realworld.io/api/user`, {
-                    user: {
-                        email: email,
-                        token: user.token,
-                        username: username,
-                        bio: bio,
-                        image: image,
-                    },
-                    headers: {
-                        'content-type': 'application/json',
-                        authorization: 'Token' + user.token,
-                    },
-                })
-                .then((response) => {
-                    console.log(response);
-                    // localStorage.setItem('user', JSON.stringify(response.data.user));
-                    // context.setUser(response.data.user);
-                    // navigate('/');
-                })
-                .catch((err) => {
-                    console.log(err);
-                    // setMessages(Object.entries(err.response.data.errors));
-                    // setShowMessage(true);
-                });
+        if (!context.isEmail(email) || (!context.isPassword(password) && password.length > 0)) {
+            console.log('ERROR!');
+            return;
         }
+        context
+            .sendData({
+                image,
+                username: username || user.username,
+                bio,
+                email: email || user.email,
+                password,
+                api: 'https://api.realworld.io/api/user',
+                method: 'put',
+                navigate,
+                path: '/',
+                token: user.token,
+            })
+            .then((err) => {
+                console.log(err);
+            });
+
+        // if (context.isEmail(email)) {
+        //     axios
+        //         .put(
+        //             `https://api.realworld.io/api/user`,
+        //             {
+        //                 user: {
+        //                     image: image,
+        //                     username: username || user.username,
+        //                     bio: bio,
+        //                     email: email || user.email,
+        //                     password: password || '',
+        //                 },
+        //             },
+        //             {
+        //                 headers: {
+        //                     Accept: 'application/json',
+        //                     'Access-Control-Allow-Orgin': '*',
+        //                     'content-type': 'application/json',
+        //                     Authorization: 'Token ' + user.token,
+        //                 },
+        //             },
+        //         )
+        //         .then((response) => {
+        //             console.log(response);
+        //             localStorage.setItem('user', JSON.stringify(response.data.user));
+        //             context.setUser(response.data.user);
+        //             // navigate('/');
+        //         })
+        //         .catch((err) => {
+        //             console.log(err);
+        //             // setMessages(Object.entries(err.response.data.errors));
+        //             // setShowMessage(true);
+        //         });
+        // }
     };
 
     return (
@@ -64,7 +93,7 @@ function FormSetting() {
                     <input
                         className="form-control form-control-lg"
                         type="text"
-                        placeholder="Your Name"
+                        placeholder={user.username}
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
                     />
@@ -74,7 +103,7 @@ function FormSetting() {
                         className="form-control form-control-lg"
                         rows="8"
                         placeholder="Short bio about you"
-                        value={bio || ''}
+                        value={bio}
                         onChange={(e) => {
                             setBio(e.target.value);
                         }}
@@ -84,7 +113,7 @@ function FormSetting() {
                     <input
                         className="form-control form-control-lg"
                         type="email"
-                        placeholder="Email"
+                        placeholder={user.email}
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                     />
@@ -93,7 +122,7 @@ function FormSetting() {
                     <input
                         className="form-control form-control-lg"
                         type="password"
-                        placeholder="Password"
+                        placeholder="New password"
                         minLength="8"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}

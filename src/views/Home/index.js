@@ -32,7 +32,6 @@ function Home() {
         setTag('');
     };
     const handleShowTag = (e) => {
-        console.log(e.target.innerHTML);
         setTag(e.target.innerHTML);
     };
 

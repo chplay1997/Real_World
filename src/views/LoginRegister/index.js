@@ -1,10 +1,10 @@
 import { useContext, useState } from 'react';
-import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 
 import { UserContext } from '~/store/UserProvider';
 
 function LoginRegister() {
+    let path = window.location.pathname.split('/')[1];
     const context = useContext(UserContext);
     const navigate = useNavigate();
 
@@ -14,45 +14,47 @@ function LoginRegister() {
     const [messages, setMessages] = useState([]);
     const [showMessage, setShowMessage] = useState(false);
 
-    let path = window.location.pathname.split('/')[1];
-
-    //call api and send messages error
-    const sendData = (e, target, userName) => {
-        e.preventDefault();
-        axios
-            .post(`https://api.realworld.io/api/users${target}`, {
-                user: {
-                    username: userName,
-                    email: email,
-                    password: password,
-                },
-            })
-            .then((response) => {
-                localStorage.setItem('jwtToken', response.data.user.token);
-                localStorage.setItem('user', JSON.stringify(response.data.user));
-                context.setUser(response.data.user);
-                navigate('/');
-            })
-            .catch((err) => {
-                setMessages(Object.entries(err.response.data.errors));
-                setShowMessage(true);
-            });
+    //Show message error
+    const showMessageError = (message) => {
+        setMessages(message);
+        setShowMessage(true);
     };
 
     //Handle on submit login or register
     const HanldeOnSubmit = (e) => {
-        if (context.isEmail(email) && context.isPassword(password)) {
-            if (path === 'login') {
-                sendData(e, '/login');
-            } else if (path === 'register') {
-                sendData(e, '', userName);
-            } else {
-                e.preventDefault();
-                setShowMessage(true);
-            }
-        } else {
-            setMessages([['Username or password', [' is valid!']]]);
-            setShowMessage(true);
+        if (!context.isEmail(email) || !context.isPassword(password)) {
+            showMessageError([['Username or password', [' is valid!']]]);
+            return;
+        }
+        e.preventDefault();
+        if (path === 'login') {
+            context
+                .sendData({
+                    userName,
+                    email,
+                    password,
+                    api: 'https://api.realworld.io/api/users/login',
+                    method: 'post',
+                    navigate,
+                    path: '/',
+                })
+                .then((err) => {
+                    if (err) showMessageError(Object.entries(err.response.data.errors));
+                });
+        } else if (path === 'register') {
+            context
+                .sendData({
+                    userName,
+                    email,
+                    password,
+                    api: 'https://api.realworld.io/api/users',
+                    method: 'post',
+                    navigate,
+                    path: '/',
+                })
+                .then((err) => {
+                    if (err) showMessageError(Object.entries(err.response.data.errors));
+                });
         }
     };
 
@@ -64,9 +66,9 @@ function LoginRegister() {
                         <h1 className="text-xs-center">{path === 'login' ? 'Sign in' : 'Sign up'}</h1>
                         <p className="text-xs-center">
                             {path === 'login' ? (
-                                <Link to={'/register'}>{'Need an account?'}</Link>
+                                <Link to={'/register'}>Need an account?</Link>
                             ) : (
-                                <Link to={'/login'}>{'Have an account?'}</Link>
+                                <Link to={'/login'}>Have an account?</Link>
                             )}
                         </p>
 

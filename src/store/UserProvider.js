@@ -1,9 +1,32 @@
-import { createContext, useState } from 'react';
+import { createContext, useEffect, useState } from 'react';
+import axios from 'axios';
 
 const UserContext = createContext();
 
 function UserProvider({ children }) {
-    const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')) || null);
+    const token = localStorage.getItem('jwtToken');
+    const [user, setUser] = useState('');
+    //Get user
+    useEffect(() => {
+        if (!token) {
+            return;
+        }
+        axios
+            .get('https://api.realworld.io/api/user', {
+                headers: {
+                    Accept: 'application/json',
+                    'Access-Control-Allow-Orgin': '*',
+                    'content-type': 'application/json',
+                    Authorization: 'Token ' + token,
+                },
+            })
+            .then((response) => {
+                setUser(response.data.user);
+                console.log(response.data.user);
+            })
+            .catch((err) => console.log(err));
+    }, [token]);
+    console.log('run context');
 
     //regex email
     const isEmail = (email) => {
@@ -24,7 +47,41 @@ function UserProvider({ children }) {
         }
         return false;
     };
-    const value = { user, setUser, isEmail, isPassword };
+
+    //Call api and send data
+    const sendData = (input) => {
+        console.log(input);
+        return axios[input.method](
+            input.api,
+            {
+                user: {
+                    image: input.image || '',
+                    username: input.userName,
+                    bio: input.bio || '',
+                    email: input.email,
+                    password: input.password,
+                },
+            },
+            {
+                headers: {
+                    Accept: 'application/json',
+                    'Access-Control-Allow-Orgin': '*',
+                    'content-type': 'application/json',
+                    Authorization: 'Token ' + (input.token || ''),
+                },
+            },
+        )
+            .then((response) => {
+                console.log(response);
+                localStorage.setItem('jwtToken', response.data.user.token);
+                setUser(response.data.user);
+                input.navigate(input.path || '/');
+            })
+            .catch((err) => {
+                return err;
+            });
+    };
+    const value = { user, setUser, isEmail, isPassword, sendData };
     return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
 }
 
