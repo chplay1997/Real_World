@@ -26,7 +26,7 @@ function Profile() {
                 <div className="container">
                     <div className="row">
                         <div className="col-xs-12 col-md-10 offset-md-1">
-                            <img alt={profile.username} src={profile.image} className="user-img" />
+                            <img alt="" src={profile.image} className="user-img" />
                             <h4>{profile.username}</h4>
                             <p>{profile.bio}</p>
 

@@ -1,122 +1,60 @@
-import { Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
+import { useParams, Link } from 'react-router-dom';
+import ArricleActions from '~/components/Article/ArricleActions';
+import Loading from '~/components/Loading';
+import ArticleMeta from '~/components/Article/ArticleMeta';
 
 function Article() {
+    const { title } = useParams();
+    const [article, setArticle] = useState('');
+
+    useEffect(() => {
+        axios
+            .get(`https://api.realworld.io/api/articles/${title}`)
+            .then((response) => {
+                setArticle(response.data.article);
+                console.log(response.data.article);
+            })
+            .catch((error) => console.log(error));
+    }, [title]);
+
+    if (!article) {
+        return <Loading />;
+    }
+
     return (
         <div className="article-page">
             <div className="banner">
                 <div className="container">
-                    <h1>How to build webapps that scale</h1>
+                    <h1>{article.title}</h1>
 
-                    <div className="article-meta">
-                        <Link to="">
-                            <img alt="" src="http://i.imgur.com/Qr71crq.jpg" />
-                        </Link>
-                        <div className="info">
-                            <Link to="" className="author">
-                                Eric Simons
-                            </Link>
-                            <span className="date">January 20th</span>
-                        </div>
-                        <button className="btn btn-sm btn-outline-secondary">
-                            <i className="ion-plus-round"></i>
-                            &nbsp; Follow Eric Simons <span className="counter">(10)</span>
-                        </button>
-                        &nbsp;&nbsp;
-                        <button className="btn btn-sm btn-outline-primary">
-                            <i className="ion-heart"></i>
-                            &nbsp; Favorite Post <span className="counter">(29)</span>
-                        </button>
-                    </div>
+                    <ArticleMeta article={article} />
                 </div>
             </div>
 
             <div className="container page">
                 <div className="row article-content">
                     <div className="col-md-12">
-                        <p>Web development technologies have evolved at an incredible clip over the past few years.</p>
-                        <h2 id="introducing-ionic">Introducing RealWorld.</h2>
-                        <p>It's a great solution for learning how other frameworks work.</p>
+                        <div className="ng-binding">
+                            <p>{article.body}</p>
+                        </div>
+
+                        <ul className="tag-list">
+                            {article.tagList.map((tag, index) => (
+                                <li key={index} className="tag-default tag-pill tag-outline ng-binding ng-scope">
+                                    {tag}
+                                </li>
+                            ))}
+                        </ul>
                     </div>
                 </div>
 
                 <hr />
-
                 <div className="article-actions">
-                    <div className="article-meta">
-                        <Link to="profile.html">
-                            <img alt="" src="http://i.imgur.com/Qr71crq.jpg" />
-                        </Link>
-                        <div className="info">
-                            <Link to="" className="author">
-                                Eric Simons
-                            </Link>
-                            <span className="date">January 20th</span>
-                        </div>
-                        <button className="btn btn-sm btn-outline-secondary">
-                            <i className="ion-plus-round"></i>
-                            &nbsp; Follow Eric Simons
-                        </button>
-                        &nbsp;
-                        <button className="btn btn-sm btn-outline-primary">
-                            <i className="ion-heart"></i>
-                            &nbsp; Favorite Post <span className="counter">(29)</span>
-                        </button>
-                    </div>
+                    <ArticleMeta article={article} />
                 </div>
-
-                <div className="row">
-                    <div className="col-xs-12 col-md-8 offset-md-2">
-                        <form className="card comment-form">
-                            <div className="card-block">
-                                <textarea className="form-control" placeholder="Write a comment..." rows="3"></textarea>
-                            </div>
-                            <div className="card-footer">
-                                <img alt="" src="http://i.imgur.com/Qr71crq.jpg" className="comment-author-img" />
-                                <button className="btn btn-sm btn-primary">Post Comment</button>
-                            </div>
-                        </form>
-
-                        <div className="card">
-                            <div className="card-block">
-                                <p className="card-text">
-                                    With supporting text below as a natural lead-in to additional content.
-                                </p>
-                            </div>
-                            <div className="card-footer">
-                                <Link to="" className="comment-author">
-                                    <img alt="" src="http://i.imgur.com/Qr71crq.jpg" className="comment-author-img" />
-                                </Link>
-                                &nbsp;
-                                <Link to="" className="comment-author">
-                                    Jacob Schmidt
-                                </Link>
-                                <span className="date-posted">Dec 29th</span>
-                            </div>
-                        </div>
-
-                        <div className="card">
-                            <div className="card-block">
-                                <p className="card-text">
-                                    With supporting text below as a natural lead-in to additional content.
-                                </p>
-                            </div>
-                            <div className="card-footer">
-                                <Link to="" className="comment-author">
-                                    <img alt="" src="http://i.imgur.com/Qr71crq.jpg" className="comment-author-img" />
-                                </Link>
-                                &nbsp;
-                                <Link to="" className="comment-author">
-                                    Jacob Schmidt
-                                </Link>
-                                <span className="date-posted">Dec 29th</span>
-                                <span className="mod-options">
-                                    <i className="ion-edit"></i>
-                                    <i className="ion-trash-a"></i>
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <ArricleActions author={article.author} title={title} />
             </div>
         </div>
     );

@@ -22,11 +22,9 @@ function UserProvider({ children }) {
             })
             .then((response) => {
                 setUser(response.data.user);
-                console.log(response.data.user);
             })
             .catch((err) => console.log(err));
     }, [token]);
-    console.log('run context');
 
     //regex email
     const isEmail = (email) => {
@@ -50,7 +48,6 @@ function UserProvider({ children }) {
 
     //Call api and send data
     const sendData = (input) => {
-        console.log(input);
         return axios[input.method](
             input.api,
             {
@@ -60,6 +57,12 @@ function UserProvider({ children }) {
                     bio: input.bio || '',
                     email: input.email,
                     password: input.password,
+                },
+                article: {
+                    title: input.title,
+                    description: input.description,
+                    body: input.body,
+                    tagList: input.tagList,
                 },
             },
             {
@@ -72,16 +75,29 @@ function UserProvider({ children }) {
             },
         )
             .then((response) => {
-                console.log(response);
-                localStorage.setItem('jwtToken', response.data.user.token);
-                setUser(response.data.user);
+                if (response.data.hasOwnProperty('user')) {
+                    localStorage.setItem('jwtToken', response.data.user.token);
+                    setUser(response.data.user);
+                }
                 input.navigate(input.path || '/');
             })
             .catch((err) => {
                 return err;
             });
     };
-    const value = { user, setUser, isEmail, isPassword, sendData };
+
+    //GET profile //Thua
+    const getProfile = (username) => {
+        return axios
+            .get('https://api.realworld.io/api/profiles/' + username)
+            .then((response) => {
+                return response.data.profile;
+            })
+            .catch((err) => {
+                return err;
+            });
+    };
+    const value = { user, setUser, isEmail, isPassword, sendData, getProfile };
     return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
 }
 

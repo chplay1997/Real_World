@@ -1,27 +1,60 @@
-// @import 'normalize.css';
-// // @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
+* {
+    box-sizing: border-box;
+}
+.loading {
+    z-index: 10;
+    width: 200px;
+    height: 200px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2rem;
+    overflow: hidden;
+    margin: 10px auto;
+    position: relative;
+    animation: text-color 2s ease-in-out infinite alternate-reverse;
+}
+.spinner-sec {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 5px dotted transparent;
+    mix-blend-mode: lighten;
+    animation: rotate var(--duration) var(--timming) infinite;
+}
+.spin-sec-one {
+    border-left-color: lightcoral;
+    --duration: 2s;
+    --timming: ease-in;
+}
+.spin-sec-two {
+    border-top-color: lightblue;
+    --duration: 2s;
+    --timming: ease-in-out;
+}
+.spin-sec-three {
+    border-right-color: lightgreen;
+    --duration: 2s;
+    --timming: ease-out;
+}
 
-// :root {
-//     --primary: #fe2c55;
-
-//     //Dedault layout
-//     --default-layout-header-height: 60px;
-// }
-
-// * {
-//     box-sizing: border-box;
-//     margin: 0;
-//     padding: 0;
-// }
-
-// html {
-//     font-size: 62.5%;
-// }
-
-// body {
-//     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-//     font-size: 1.6rem;
-//     line-height: 1.5;
-//     text-rendering: optimizeSpeed;
-//     background-color: #fafbfc;
-// }
+@keyframes rotate {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+@keyframes text-color {
+    0% {
+        color: rgba(0, 0, 0, 0.8);
+    }
+    50% {
+        color: rgba(0, 0, 0, 0.4);
+    }
+    100% {
+        color: rgba(0, 0, 0, 0.2);
+    }
+}

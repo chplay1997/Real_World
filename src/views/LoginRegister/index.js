@@ -1,6 +1,7 @@
 import { useContext, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
+import MesseagesError from '~/components/MesseagesError';
 import { UserContext } from '~/store/UserProvider';
 
 function LoginRegister() {
@@ -8,54 +9,34 @@ function LoginRegister() {
     const context = useContext(UserContext);
     const navigate = useNavigate();
 
+    //User input data
     const [userName, setUserName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [messages, setMessages] = useState([]);
-    const [showMessage, setShowMessage] = useState(false);
-
-    //Show message error
-    const showMessageError = (message) => {
-        setMessages(message);
-        setShowMessage(true);
-    };
+    const [messages, setMessages] = useState('');
 
     //Handle on submit login or register
     const HanldeOnSubmit = (e) => {
+        //Validate email and password
         if (!context.isEmail(email) || !context.isPassword(password)) {
-            showMessageError([['Username or password', [' is valid!']]]);
+            setMessages([['Username or password', [' is valid!']]]);
             return;
         }
         e.preventDefault();
-        if (path === 'login') {
-            context
-                .sendData({
-                    userName,
-                    email,
-                    password,
-                    api: 'https://api.realworld.io/api/users/login',
-                    method: 'post',
-                    navigate,
-                    path: '/',
-                })
-                .then((err) => {
-                    if (err) showMessageError(Object.entries(err.response.data.errors));
-                });
-        } else if (path === 'register') {
-            context
-                .sendData({
-                    userName,
-                    email,
-                    password,
-                    api: 'https://api.realworld.io/api/users',
-                    method: 'post',
-                    navigate,
-                    path: '/',
-                })
-                .then((err) => {
-                    if (err) showMessageError(Object.entries(err.response.data.errors));
-                });
-        }
+        const api = 'https://api.realworld.io/api/users';
+        context
+            .sendData({
+                userName,
+                email,
+                password,
+                api: path === 'login' ? api + '/login' : api,
+                method: 'post',
+                navigate,
+                path: '/',
+            })
+            .then((err) => {
+                if (err) setMessages(err);
+            });
     };
 
     return (
@@ -72,13 +53,7 @@ function LoginRegister() {
                             )}
                         </p>
 
-                        {showMessage && (
-                            <ul className="error-messages">
-                                {messages.map((mes, index) => (
-                                    <li key={index}>{mes[0] + ' ' + mes[1]}</li>
-                                ))}
-                            </ul>
-                        )}
+                        {messages ? <MesseagesError err={messages} /> : ''}
 
                         <form>
                             {path === 'register' && (
@@ -90,8 +65,8 @@ function LoginRegister() {
                                         required
                                         value={userName}
                                         onChange={(e) => {
+                                            setMessages('');
                                             setUserName(e.target.value);
-                                            setShowMessage(false);
                                         }}
                                     />
                                 </fieldset>
@@ -104,8 +79,8 @@ function LoginRegister() {
                                     required
                                     value={email}
                                     onChange={(e) => {
+                                        setMessages('');
                                         setEmail(e.target.value);
-                                        setShowMessage(false);
                                     }}
                                 />
                             </fieldset>
@@ -118,7 +93,7 @@ function LoginRegister() {
                                     required
                                     value={password}
                                     onChange={(e) => {
-                                        setShowMessage(false);
+                                        setMessages('');
                                         setPassword(e.target.value);
                                     }}
                                 />

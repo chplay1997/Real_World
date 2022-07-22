@@ -1,6 +1,5 @@
 import { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 
 import { UserContext } from '~/store/UserProvider';
 
@@ -14,9 +13,6 @@ function FormSetting() {
     const [bio, setBio] = useState(user.bio || '');
     const [email, setEmail] = useState(user.email);
     const [password, setPassword] = useState('');
-
-    const [messages, setMessages] = useState([]);
-    const [showMessage, setShowMessage] = useState(false);
 
     const handleUpdateUser = (e) => {
         e.preventDefault();
@@ -34,47 +30,12 @@ function FormSetting() {
                 api: 'https://api.realworld.io/api/user',
                 method: 'put',
                 navigate,
-                path: '/',
+                path: `/@${user.username}`,
                 token: user.token,
             })
             .then((err) => {
                 console.log(err);
             });
-
-        // if (context.isEmail(email)) {
-        //     axios
-        //         .put(
-        //             `https://api.realworld.io/api/user`,
-        //             {
-        //                 user: {
-        //                     image: image,
-        //                     username: username || user.username,
-        //                     bio: bio,
-        //                     email: email || user.email,
-        //                     password: password || '',
-        //                 },
-        //             },
-        //             {
-        //                 headers: {
-        //                     Accept: 'application/json',
-        //                     'Access-Control-Allow-Orgin': '*',
-        //                     'content-type': 'application/json',
-        //                     Authorization: 'Token ' + user.token,
-        //                 },
-        //             },
-        //         )
-        //         .then((response) => {
-        //             console.log(response);
-        //             localStorage.setItem('user', JSON.stringify(response.data.user));
-        //             context.setUser(response.data.user);
-        //             // navigate('/');
-        //         })
-        //         .catch((err) => {
-        //             console.log(err);
-        //             // setMessages(Object.entries(err.response.data.errors));
-        //             // setShowMessage(true);
-        //         });
-        // }
     };
 
     return (

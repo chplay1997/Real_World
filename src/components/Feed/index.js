@@ -38,11 +38,11 @@ function Feed(props) {
                 listFeed.map((feed, index) => (
                     <div className="article-preview" key={index}>
                         <div className="article-meta">
-                            <Link to="profile.html">
-                                <img alt="" src={feed.author.image} />
+                            <Link to={`/@${feed.author.username}`}>
+                                <img alt={feed.author.username} src={feed.author.image} />
                             </Link>
                             <div className="info">
-                                <Link to="" className="author">
+                                <Link to={`/@${feed.author.username}`} className="author">
                                     {feed.author.username}
                                 </Link>
                                 <span className="date">{feed.createdAt}</span>
@@ -51,7 +51,7 @@ function Feed(props) {
                                 <i className="ion-heart" /> {feed.favoritesCount}
                             </button>
                         </div>
-                        <Link to="" className="preview-link">
+                        <Link to={`/article/${feed.title.replaceAll(' ', '-')}-1`} className="preview-link">
                             <h1>{feed.title}</h1>
                             <p>{feed.description}</p>
                             <span>Read more...</span>
