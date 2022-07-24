@@ -1,6 +1,6 @@
+import { useContext, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
-import { useContext, useEffect, useState } from 'react';
 
 import { UserContext } from '~/store/UserProvider';
 
@@ -24,7 +24,7 @@ function ArricleActions(props) {
             <div className="col-xs-12 col-md-8 offset-md-2">
                 <form className="card comment-form">
                     <div className="card-block">
-                        <textarea className="form-control" placeholder="Write a comment..." rows="3"></textarea>
+                        <textarea className="form-control" placeholder="Write a comment..." rows="3" />
                     </div>
                     <div className="card-footer">
                         <img alt="" src={user.image} className="comment-author-img" />
