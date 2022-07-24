@@ -3,23 +3,43 @@ import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
 
 import { UserContext } from '~/store/UserProvider';
+import ArticlePreview from '~/components/Article/ArticlePreview';
 
 function Profile() {
     const context = useContext(UserContext);
     const user = context.user;
+
     const { name } = useParams();
     const [profile, setProfile] = useState('');
+    const [typeArticle, setTypeArticle] = useState('author');
+
     useEffect(() => {
+        console.log('run');
         axios
             .get('https://api.realworld.io/api/profiles/' + name)
             .then((response) => {
                 setProfile(response.data.profile);
-                console.log(response.data.profile);
             })
             .catch((err) => {
                 console.log(err);
             });
     }, [name]);
+
+    const handleShowArticle = (e) => {
+        if (e.target.textContent === 'My Articles') {
+            setTypeArticle('author');
+        } else if (e.target.textContent === 'Favorited Articles') {
+            setTypeArticle('favorited');
+        }
+        console.log(e.target.parentNode);
+        // console.log(e.target.parentNode.nextElementSibling);
+        // e.target.classList.add('active');
+        // if (e.target.textContent === 'My Articles') {
+        //     e.target.classList.add('active');
+        // } else {
+        //     e.target.classList.remove('active');
+        // }
+    };
     return (
         <div className="profile-page">
             <div className="user-info">
@@ -55,65 +75,27 @@ function Profile() {
                         <div className="articles-toggle">
                             <ul className="nav nav-pills outline-active">
                                 <li className="nav-item">
-                                    <Link className="nav-link active" to="">
+                                    <Link
+                                        className="nav-link active"
+                                        to={`/@${user.username}`}
+                                        onClick={handleShowArticle}
+                                    >
                                         My Articles
                                     </Link>
                                 </li>
                                 <li className="nav-item">
-                                    <Link className="nav-link" to="">
+                                    <Link
+                                        className="nav-link"
+                                        to={`/@${user.username}/favorites`}
+                                        onClick={handleShowArticle}
+                                    >
                                         Favorited Articles
                                     </Link>
                                 </li>
                             </ul>
                         </div>
 
-                        <div className="article-preview">
-                            <div className="article-meta">
-                                <Link to="">
-                                    <img alt="" src="http://i.imgur.com/Qr71crq.jpg" />
-                                </Link>
-                                <div className="info">
-                                    <Link to="" className="author">
-                                        Eric Simons
-                                    </Link>
-                                    <span className="date">January 20th</span>
-                                </div>
-                                <button className="btn btn-outline-primary btn-sm pull-xs-right">
-                                    <i className="ion-heart"></i> 29
-                                </button>
-                            </div>
-                            <Link to="" className="preview-link">
-                                <h1>How to build webapps that scale</h1>
-                                <p>This is the description for the post.</p>
-                                <span>Read more...</span>
-                            </Link>
-                        </div>
-
-                        <div className="article-preview">
-                            <div className="article-meta">
-                                <Link to="">
-                                    <img alt="" src="http://i.imgur.com/N4VcUeJ.jpg" />
-                                </Link>
-                                <div className="info">
-                                    <Link to="" className="author">
-                                        Albert Pai
-                                    </Link>
-                                    <span className="date">January 20th</span>
-                                </div>
-                                <button className="btn btn-outline-primary btn-sm pull-xs-right">
-                                    <i className="ion-heart"></i> 32
-                                </button>
-                            </div>
-                            <Link to="" className="preview-link">
-                                <h1>The song you won't ever stop singing. No matter how hard you try.</h1>
-                                <p>This is the description for the post.</p>
-                                <span>Read more...</span>
-                                <ul className="tag-list">
-                                    <li className="tag-default tag-pill tag-outline">Music</li>
-                                    <li className="tag-default tag-pill tag-outline">Song</li>
-                                </ul>
-                            </Link>
-                        </div>
+                        <ArticlePreview name={name} typeArticle={typeArticle} />
                     </div>
                 </div>
             </div>

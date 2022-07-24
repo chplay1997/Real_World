@@ -14,6 +14,8 @@ const publicRoutes = [
     { path: '/create', component: Create },
     { path: '/settings', component: Settings },
     { path: '/@:name', component: Profile },
+    { path: '/@:name/favorites', component: Profile },
+    // { path: '/@:name/favorites', component: Profile },
 ];
 
 const privateRoutes = [];
