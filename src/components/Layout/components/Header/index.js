@@ -65,7 +65,10 @@ function Header() {
 
                     {user && (
                         <li className="nav-item">
-                            <Link to={`/@${user.username}`} className={`nav-link ng-binding ${active('profile')}`}>
+                            <Link
+                                to={`/@${user.username}`}
+                                className={`nav-link ng-binding ${active(`@${user.username}`)}`}
+                            >
                                 <img alt="" src={user.image} className="user-pic" />
                                 {user.username}
                             </Link>

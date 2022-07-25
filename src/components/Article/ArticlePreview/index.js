@@ -1,20 +1,25 @@
-import { useContext, useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import axios from 'axios';
 
-import { UserContext } from '~/store/UserProvider';
 function ArticlePreview(props) {
     const [articles, setArticles] = useState([]);
     useEffect(() => {
-        console.log(`https://api.realworld.io/api/articles?${props.typeArticle}=${props.name}&limit=5&offset=0`);
         axios
-            .get(`https://api.realworld.io/api/articles?${props.typeArticle}=${props.name}&limit=5&offset=0`)
+            .get(`https://api.realworld.io/api/articles?${props.typeArticle}=${props.name}&limit=5&offset=0`, {
+                headers: {
+                    Accept: 'application/json',
+                    'Access-Control-Allow-Orgin': '*',
+                    'content-type': 'application/json',
+                    Authorization: 'Token ' + localStorage.getItem('jwtToken'),
+                },
+            })
             .then((response) => {
-                console.log(response.data.articles);
                 setArticles(response.data.articles);
             })
             .catch((err) => console.log(err));
     }, [props.typeArticle]);
+
     return (
         <>
             {articles.map((article, index) => (

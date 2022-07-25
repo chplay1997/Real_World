@@ -26,19 +26,14 @@ function Profile() {
     }, [name]);
 
     const handleShowArticle = (e) => {
+        e.target.classList.add('active');
         if (e.target.textContent === 'My Articles') {
             setTypeArticle('author');
+            e.target.parentNode.nextElementSibling.firstChild.classList.remove('active');
         } else if (e.target.textContent === 'Favorited Articles') {
             setTypeArticle('favorited');
+            e.target.parentNode.previousElementSibling.firstChild.classList.remove('active');
         }
-        console.log(e.target.parentNode);
-        // console.log(e.target.parentNode.nextElementSibling);
-        // e.target.classList.add('active');
-        // if (e.target.textContent === 'My Articles') {
-        //     e.target.classList.add('active');
-        // } else {
-        //     e.target.classList.remove('active');
-        // }
     };
     return (
         <div className="profile-page">
