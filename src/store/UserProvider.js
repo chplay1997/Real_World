@@ -6,6 +6,7 @@ const UserContext = createContext();
 function UserProvider({ children }) {
     const token = localStorage.getItem('jwtToken');
     const [user, setUser] = useState('');
+
     //Get user
     useEffect(() => {
         if (!token) {
@@ -14,14 +15,13 @@ function UserProvider({ children }) {
         axios
             .get('https://api.realworld.io/api/user', {
                 headers: {
-                    Accept: 'application/json',
-                    'Access-Control-Allow-Orgin': '*',
-                    'content-type': 'application/json',
-                    Authorization: 'Token ' + token,
+                    accept: 'application/json',
+                    authorization: 'Token ' + token,
                 },
             })
             .then((response) => {
                 setUser(response.data.user);
+                localStorage.setItem('jwtToken', response.data.user.token);
             })
             .catch((err) => console.log(err));
     }, [token]);
@@ -67,10 +67,8 @@ function UserProvider({ children }) {
             },
             {
                 headers: {
-                    Accept: 'application/json',
-                    'Access-Control-Allow-Orgin': '*',
-                    'content-type': 'application/json',
-                    Authorization: 'Token ' + (input.token || ''),
+                    accept: 'application/json',
+                    authorization: 'Token ' + token,
                 },
             },
         )
@@ -86,18 +84,28 @@ function UserProvider({ children }) {
             });
     };
 
-    //GET profile //Thua
-    const getProfile = (username) => {
-        return axios
-            .get('https://api.realworld.io/api/profiles/' + username)
-            .then((response) => {
-                return response.data.profile;
-            })
-            .catch((err) => {
-                return err;
-            });
+    const like = (slug) => {
+        return axios.post(
+            `https://api.realworld.io/api/articles/${slug}/favorite`,
+            {},
+            {
+                headers: {
+                    accept: 'application/json',
+                    authorization: 'Token ' + token,
+                },
+            },
+        );
     };
-    const value = { user, setUser, isEmail, isPassword, sendData, getProfile };
+    const disLike = (slug) => {
+        return axios.delete(`https://api.realworld.io/api/articles/${slug}/favorite`, {
+            headers: {
+                accept: 'application/json',
+                authorization: 'Token ' + token,
+            },
+        });
+    };
+
+    const value = { user, setUser, isEmail, isPassword, sendData, like, disLike };
     return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
 }
 

@@ -1,9 +1,10 @@
+import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useParams, Link } from 'react-router-dom';
+
 import ArricleActions from '~/components/Article/ArricleActions';
-import Loading from '~/components/Loading';
 import ArticleMeta from '~/components/Article/ArticleMeta';
+import Loading from '~/components/Loading';
 
 function Article() {
     const { title } = useParams();
@@ -14,7 +15,6 @@ function Article() {
             .get(`https://api.realworld.io/api/articles/${title}`)
             .then((response) => {
                 setArticle(response.data.article);
-                console.log(response.data.article);
             })
             .catch((error) => console.log(error));
     }, [title]);
@@ -28,7 +28,6 @@ function Article() {
             <div className="banner">
                 <div className="container">
                     <h1>{article.title}</h1>
-
                     <ArticleMeta article={article} />
                 </div>
             </div>

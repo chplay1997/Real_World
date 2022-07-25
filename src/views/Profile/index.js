@@ -13,17 +13,53 @@ function Profile() {
     const [profile, setProfile] = useState('');
     const [typeArticle, setTypeArticle] = useState('author');
 
+    //action following
+    const actionProfile = (input) => {
+        return axios[input.method](`https://api.realworld.io/api/profiles/${name}${input.target}`, {
+            headers: {
+                accept: 'application/json',
+                authorization: 'Token ' + localStorage.getItem('jwtToken'),
+            },
+        })
+            .then((response) => response)
+            .catch((err) => err);
+    };
+
     useEffect(() => {
-        console.log('run');
-        axios
-            .get('https://api.realworld.io/api/profiles/' + name)
-            .then((response) => {
+        actionProfile({ method: 'get', target: '' }).then((response) => {
+            if (response.data.hasOwnProperty('profile')) {
+                console.log(response.data.profile);
                 setProfile(response.data.profile);
-            })
-            .catch((err) => {
-                console.log(err);
-            });
+            } else {
+                console.log(response);
+            }
+        });
     }, [name]);
+
+    //Handle click follow or unfollow
+    const handleClickFollow = (e) => {
+        if (profile.following) {
+            actionProfile({ target: '/follow', method: 'delete' }).then((response) => {
+                console.log(response);
+            });
+            setProfile((prev) => ({ ...prev, following: false }));
+        } else {
+            axios
+                .post(
+                    `https://api.realworld.io/api/profiles/${name}/follow`,
+                    {},
+                    {
+                        headers: {
+                            accept: 'application/json',
+                            authorization: 'Token ' + localStorage.getItem('jwtToken'),
+                        },
+                    },
+                )
+                .then((response) => response)
+                .catch((err) => err);
+            setProfile((prev) => ({ ...prev, following: true }));
+        }
+    };
 
     const handleShowArticle = (e) => {
         e.target.classList.add('active');
@@ -35,6 +71,7 @@ function Profile() {
             e.target.parentNode.previousElementSibling.firstChild.classList.remove('active');
         }
     };
+
     return (
         <div className="profile-page">
             <div className="user-info">
@@ -54,9 +91,12 @@ function Profile() {
                                     <i className="ion-gear-a" /> Edit Profile Settings
                                 </Link>
                             ) : (
-                                <button className="btn btn-sm btn-outline-secondary action-btn">
-                                    <i className="ion-plus-round"></i>
-                                    &nbsp; Follow Eric Simons
+                                <button
+                                    className="btn btn-sm btn-outline-secondary action-btn"
+                                    onClick={handleClickFollow}
+                                >
+                                    <i className="ion-plus-round" />
+                                    &nbsp; {profile.following ? 'Unfollow' : 'Follow'} {profile.username}
                                 </button>
                             )}
                         </div>
@@ -70,27 +110,24 @@ function Profile() {
                         <div className="articles-toggle">
                             <ul className="nav nav-pills outline-active">
                                 <li className="nav-item">
-                                    <Link
-                                        className="nav-link active"
-                                        to={`/@${user.username}`}
-                                        onClick={handleShowArticle}
-                                    >
+                                    <Link className="nav-link active" to={`/@${name}`} onClick={handleShowArticle}>
                                         My Articles
                                     </Link>
                                 </li>
                                 <li className="nav-item">
-                                    <Link
-                                        className="nav-link"
-                                        to={`/@${user.username}/favorites`}
-                                        onClick={handleShowArticle}
-                                    >
+                                    <Link className="nav-link" to={`/@${name}/favorites`} onClick={handleShowArticle}>
                                         Favorited Articles
                                     </Link>
                                 </li>
                             </ul>
                         </div>
 
-                        <ArticlePreview name={name} typeArticle={typeArticle} />
+                        <ArticlePreview
+                            name={name}
+                            typeArticle={typeArticle}
+                            like={context.like}
+                            disLike={context.disLike}
+                        />
                     </div>
                 </div>
             </div>
