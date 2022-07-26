@@ -1,6 +1,5 @@
 function MesseagesError(props) {
     let messages = [];
-    console.log(props);
     if (props.err.hasOwnProperty('response')) {
         messages = Object.entries(props.err.response.data.errors);
     } else {
