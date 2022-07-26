@@ -1,9 +1,13 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 
+import { UserContext } from '~/store/UserProvider';
+
 function ArticlePreview(props) {
-    const [articles, setArticles] = useState([]);
+    const context = useContext(UserContext);
+
+    const [articles, setArticles] = useState('');
     const [checkLike, setCheckLike] = useState(false);
     useEffect(() => {
         axios
@@ -14,8 +18,8 @@ function ArticlePreview(props) {
                 },
             })
             .then((response) => {
-                console.log(response);
                 setArticles(response.data.articles);
+                context.setMessageLoading('');
             })
             .catch((err) => console.log(err));
     }, [props.typeArticle, props.name, checkLike]);
@@ -23,14 +27,26 @@ function ArticlePreview(props) {
     const handleClickLike = async (e, slug, favorited) => {
         e.target.classList.toggle('active');
         if (favorited) {
-            const response = await props.disLike(slug);
-            console.log(response);
+            await context.disLike(slug);
         } else {
-            const response = await props.like(slug);
-            console.log(response);
+            await context.like(slug);
         }
         setCheckLike(!checkLike);
     };
+
+    if (!articles) {
+        return (
+            <div className="load-wrapp">
+                <div className="load-3">
+                    <div className="line"></div>
+                    <div className="line"></div>
+                    <div className="line"></div>
+                </div>
+            </div>
+        );
+    } else if (context.messageLoading) {
+        return <div className="article-preview">{context.messageLoading}</div>;
+    }
 
     return (
         <>

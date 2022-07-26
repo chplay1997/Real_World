@@ -8,7 +8,6 @@ import Loading from '~/components/Loading';
 
 function Profile() {
     const context = useContext(UserContext);
-    const user = context.user;
 
     const { name } = useParams();
     const [profile, setProfile] = useState('');
@@ -29,7 +28,6 @@ function Profile() {
     useEffect(() => {
         actionProfile({ method: 'get', target: '' }).then((response) => {
             if (response.data.hasOwnProperty('profile')) {
-                console.log(response.data.profile);
                 setProfile(response.data.profile);
             } else {
                 console.log(response);
@@ -63,6 +61,7 @@ function Profile() {
     };
 
     const handleShowArticle = (e) => {
+        context.setMessage(e);
         e.target.classList.add('active');
         if (e.target.textContent === 'My Articles') {
             setTypeArticle('author');
@@ -86,7 +85,7 @@ function Profile() {
                             <h4>{profile.username}</h4>
                             <p>{profile.bio}</p>
 
-                            {user.username === profile.username ? (
+                            {context.user.username === profile.username ? (
                                 <Link
                                     to="/settings"
                                     className="btn btn-sm btn-outline-secondary action-btn"
@@ -125,13 +124,7 @@ function Profile() {
                                 </li>
                             </ul>
                         </div>
-
-                        <ArticlePreview
-                            name={name}
-                            typeArticle={typeArticle}
-                            like={context.like}
-                            disLike={context.disLike}
-                        />
+                        <ArticlePreview name={name} typeArticle={typeArticle} />
                     </div>
                 </div>
             </div>

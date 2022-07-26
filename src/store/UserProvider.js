@@ -6,6 +6,7 @@ const UserContext = createContext();
 function UserProvider({ children }) {
     const token = localStorage.getItem('jwtToken');
     const [user, setUser] = useState('');
+    const [messageLoading, setMessageLoading] = useState('');
 
     //Get user
     useEffect(() => {
@@ -84,6 +85,7 @@ function UserProvider({ children }) {
             });
     };
 
+    //click like and dislike
     const like = (slug) => {
         return axios.post(
             `https://api.realworld.io/api/articles/${slug}/favorite`,
@@ -105,7 +107,25 @@ function UserProvider({ children }) {
         });
     };
 
-    const value = { user, setUser, isEmail, isPassword, sendData, like, disLike };
+    //Set view loading articles
+    const setMessage = (e) => {
+        if (!e.target.closest('.active')) {
+            setMessageLoading('Loading articles...');
+        }
+    };
+
+    const value = {
+        user,
+        setUser,
+        isEmail,
+        isPassword,
+        sendData,
+        like,
+        disLike,
+        messageLoading,
+        setMessage,
+        setMessageLoading,
+    };
     return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
 }
 
