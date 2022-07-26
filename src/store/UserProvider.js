@@ -69,7 +69,7 @@ function UserProvider({ children }) {
             {
                 headers: {
                     accept: 'application/json',
-                    authorization: 'Token ' + token,
+                    authorization: 'Token ' + (token || ''),
                 },
             },
         )
@@ -93,7 +93,7 @@ function UserProvider({ children }) {
             {
                 headers: {
                     accept: 'application/json',
-                    authorization: 'Token ' + token,
+                    authorization: 'Token ' + (token || ''),
                 },
             },
         );
@@ -102,7 +102,7 @@ function UserProvider({ children }) {
         return axios.delete(`https://api.realworld.io/api/articles/${slug}/favorite`, {
             headers: {
                 accept: 'application/json',
-                authorization: 'Token ' + token,
+                authorization: 'Token ' + (token || ''),
             },
         });
     };
@@ -112,6 +112,18 @@ function UserProvider({ children }) {
         if (!e.target.closest('.active')) {
             setMessageLoading('Loading articles...');
         }
+    };
+
+    //action following
+    const actionProfile = (input) => {
+        return axios[input.method](`https://api.realworld.io/api/profiles/${input.name}${input.target}`, {
+            headers: {
+                accept: 'application/json',
+                authorization: 'Token ' + (localStorage.getItem('jwtToken') || ''),
+            },
+        })
+            .then((response) => response)
+            .catch((err) => err);
     };
 
     const value = {
@@ -125,6 +137,7 @@ function UserProvider({ children }) {
         messageLoading,
         setMessage,
         setMessageLoading,
+        actionProfile,
     };
     return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
 }

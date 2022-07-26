@@ -12,7 +12,12 @@ function Article() {
 
     useEffect(() => {
         axios
-            .get(`https://api.realworld.io/api/articles/${title}`)
+            .get(`https://api.realworld.io/api/articles/${title}`, {
+                headers: {
+                    accept: 'application/json',
+                    authorization: 'Token ' + (localStorage.getItem('jwtToken') || ''),
+                },
+            })
             .then((response) => {
                 setArticle(response.data.article);
             })

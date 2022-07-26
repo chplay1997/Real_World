@@ -1,14 +1,15 @@
 import { useContext, useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 import { UserContext } from '~/store/UserProvider';
 
 function Feed(props) {
     const context = useContext(UserContext);
+    const navigate = useNavigate();
     const [checkLike, setCheckLike] = useState(false);
-
     const [listFeed, setListFeed] = useState([]);
+
     useEffect(() => {
         const getData = async () => {
             let target = props.typeFeed === 'Your Feed' ? '/feed' : '';
@@ -30,6 +31,9 @@ function Feed(props) {
     }, [props.typeFeed, props.tag, checkLike]);
 
     const handleClickLike = async (e, slug, favorited, index) => {
+        if (!localStorage.getItem('jwtToken')) {
+            navigate('/login');
+        }
         e.target.classList.toggle('active');
         if (favorited) {
             await context.disLike(slug);

@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 import { UserContext } from '~/store/UserProvider';
@@ -8,25 +8,14 @@ import Loading from '~/components/Loading';
 
 function Profile() {
     const context = useContext(UserContext);
+    const navigate = useNavigate();
 
     const { name } = useParams();
     const [profile, setProfile] = useState('');
     const [typeArticle, setTypeArticle] = useState('author');
 
-    //action following
-    const actionProfile = (input) => {
-        return axios[input.method](`https://api.realworld.io/api/profiles/${name}${input.target}`, {
-            headers: {
-                accept: 'application/json',
-                authorization: 'Token ' + localStorage.getItem('jwtToken'),
-            },
-        })
-            .then((response) => response)
-            .catch((err) => err);
-    };
-
     useEffect(() => {
-        actionProfile({ method: 'get', target: '' }).then((response) => {
+        context.actionProfile({ method: 'get', target: '', name }).then((response) => {
             if (response.data.hasOwnProperty('profile')) {
                 setProfile(response.data.profile);
             } else {
@@ -37,8 +26,13 @@ function Profile() {
 
     //Handle click follow or unfollow
     const handleClickFollow = (e) => {
+        if (!localStorage.getItem('jwtToken')) {
+            navigate('/login');
+            return;
+        }
+
         if (profile.following) {
-            actionProfile({ target: '/follow', method: 'delete' }).then((response) => {
+            context.actionProfile({ target: '/follow', method: 'delete', name }).then((response) => {
                 console.log(response);
             });
             setProfile((prev) => ({ ...prev, following: false }));
@@ -50,7 +44,7 @@ function Profile() {
                     {
                         headers: {
                             accept: 'application/json',
-                            authorization: 'Token ' + localStorage.getItem('jwtToken'),
+                            authorization: 'Token ' + (localStorage.getItem('jwtToken') || ''),
                         },
                     },
                 )
@@ -60,6 +54,7 @@ function Profile() {
         }
     };
 
+    //active btn click and set set type article
     const handleShowArticle = (e) => {
         context.setMessage(e);
         e.target.classList.add('active');

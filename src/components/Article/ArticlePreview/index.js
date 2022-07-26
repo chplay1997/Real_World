@@ -1,11 +1,12 @@
 import { useContext, useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 import { UserContext } from '~/store/UserProvider';
 
 function ArticlePreview(props) {
     const context = useContext(UserContext);
+    const navigate = useNavigate();
 
     const [articles, setArticles] = useState('');
     const [checkLike, setCheckLike] = useState(false);
@@ -14,7 +15,7 @@ function ArticlePreview(props) {
             .get(`https://api.realworld.io/api/articles?${props.typeArticle}=${props.name}&limit=5&offset=0`, {
                 headers: {
                     accept: 'application/json',
-                    authorization: 'Token ' + localStorage.getItem('jwtToken'),
+                    authorization: 'Token ' + (localStorage.getItem('jwtToken') || ''),
                 },
             })
             .then((response) => {
@@ -24,7 +25,13 @@ function ArticlePreview(props) {
             .catch((err) => console.log(err));
     }, [props.typeArticle, props.name, checkLike]);
 
+    //Handle click like or disLike
     const handleClickLike = async (e, slug, favorited) => {
+        if (!localStorage.getItem('jwtToken')) {
+            navigate('/login');
+            return;
+        }
+
         e.target.classList.toggle('active');
         if (favorited) {
             await context.disLike(slug);

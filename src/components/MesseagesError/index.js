@@ -1,5 +1,11 @@
 function MesseagesError(props) {
-    let messages = Object.entries(props.err.response.data.errors);
+    let messages = [];
+    console.log(props);
+    if (props.err.hasOwnProperty('response')) {
+        messages = Object.entries(props.err.response.data.errors);
+    } else {
+        messages = props.err;
+    }
     return (
         <ul className="error-messages">
             {messages.map((mes, index) => (
