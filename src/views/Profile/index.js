@@ -4,6 +4,7 @@ import axios from 'axios';
 
 import { UserContext } from '~/store/UserProvider';
 import ArticlePreview from '~/components/Article/ArticlePreview';
+import Loading from '~/components/Loading';
 
 function Profile() {
     const context = useContext(UserContext);
@@ -72,6 +73,9 @@ function Profile() {
         }
     };
 
+    if (!profile) {
+        return <Loading />;
+    }
     return (
         <div className="profile-page">
             <div className="user-info">

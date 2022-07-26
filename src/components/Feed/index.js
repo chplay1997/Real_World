@@ -1,9 +1,13 @@
+import { useContext, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
-import { useEffect, useState } from 'react';
+
+import { UserContext } from '~/store/UserProvider';
 
 function Feed(props) {
+    const context = useContext(UserContext);
     const jwtToken = localStorage.getItem('jwtToken');
+    const [checkLike, setCheckLike] = useState(false);
 
     const [listFeed, setListFeed] = useState([]);
     useEffect(() => {
@@ -25,10 +29,24 @@ function Feed(props) {
                     authorization: 'Token ' + jwtToken,
                 },
             });
+            console.log(data);
             setListFeed(data.data.articles);
         };
         getData();
-    }, [props.typeFeed, props.tag]);
+    }, [props.typeFeed, props.tag, checkLike]);
+
+    const handleClickLike = async (e, slug, favorited, index) => {
+        e.target.classList.toggle('active');
+        if (favorited) {
+            const response = await context.disLike(slug);
+            // setListFeed(prev=>([...prev,]))
+            console.log(response);
+        } else {
+            const response = await context.like(slug);
+            console.log(response);
+        }
+        setCheckLike(!checkLike);
+    };
 
     return (
         <>
@@ -47,7 +65,12 @@ function Feed(props) {
                                 </Link>
                                 <span className="date">{feed.createdAt}</span>
                             </div>
-                            <button className="btn btn-outline-primary btn-sm pull-xs-right">
+                            <button
+                                className={`btn btn-outline-primary btn-sm pull-xs-right ${feed.favorited && 'active'}`}
+                                onClick={(e) => {
+                                    handleClickLike(e, feed.slug, feed.favorited, index);
+                                }}
+                            >
                                 <i className="ion-heart" /> {feed.favoritesCount}
                             </button>
                         </div>
