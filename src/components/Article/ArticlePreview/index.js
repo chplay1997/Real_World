@@ -20,18 +20,14 @@ function ArticlePreview(props) {
             .catch((err) => console.log(err));
     }, [props.typeArticle, props.name, checkLike]);
 
-    const handleClickLike = (e, slug, favorited) => {
+    const handleClickLike = async (e, slug, favorited) => {
         e.target.classList.toggle('active');
         if (favorited) {
-            props
-                .disLike(slug)
-                .then((response) => console.log(response))
-                .catch((err) => console.log(err));
+            const response = await props.disLike(slug);
+            console.log(response);
         } else {
-            props
-                .like(slug)
-                .then((response) => console.log(response))
-                .catch((err) => console.log(err));
+            const response = await props.like(slug);
+            console.log(response);
         }
         setCheckLike(!checkLike);
     };
@@ -68,6 +64,13 @@ function ArticlePreview(props) {
                             <h1>{article.title}</h1>
                             <p>{article.description}</p>
                             <span>Read more...</span>
+                            <ul className="tag-list">
+                                {article.tagList.map((tag, index) => (
+                                    <li key={index} className="tag-default tag-pill tag-outline ng-binding ng-scope">
+                                        {tag}
+                                    </li>
+                                ))}
+                            </ul>
                         </Link>
                     </div>
                 ))

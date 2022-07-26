@@ -22,6 +22,7 @@ function ArricleActions(props) {
                 },
             })
             .then((response) => {
+                console.log(response.data.comments);
                 setComments(response.data.comments);
             })
             .catch((error) => console.log(error));
@@ -45,8 +46,6 @@ function ArricleActions(props) {
                 {
                     headers: {
                         Accept: 'application/json',
-                        'Access-Control-Allow-Orgin': '*',
-                        'content-type': 'application/json',
                         Authorization: 'Token ' + localStorage.getItem('jwtToken'),
                     },
                 },
@@ -55,6 +54,19 @@ function ArricleActions(props) {
                 setInputComment('');
                 setComments((prev) => [...prev, response.data.comment]);
             })
+            .catch((error) => console.log(error));
+    };
+
+    //Handle click delete comment
+    const handleClickDeleteComment = (id) => {
+        axios
+            .delete(` https://api.realworld.io/api/articles/${props.title}/comments/${id}`, {
+                headers: {
+                    Accept: 'application/json',
+                    Authorization: 'Token ' + localStorage.getItem('jwtToken'),
+                },
+            })
+            .then(() => setComments((prev) => prev.filter((item) => item.id !== id)))
             .catch((error) => console.log(error));
     };
 
@@ -95,6 +107,16 @@ function ArricleActions(props) {
                                 {comment.author.username}
                             </Link>
                             <span className="date-posted">{comment.createdAt}</span>
+                            {user.username === comment.author.username && (
+                                <span
+                                    className="mod-options"
+                                    onClick={() => {
+                                        handleClickDeleteComment(comment.id);
+                                    }}
+                                >
+                                    <i className="ion-trash-a" />
+                                </span>
+                            )}
                         </div>
                     </div>
                 ))}
