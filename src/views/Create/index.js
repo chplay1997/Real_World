@@ -51,7 +51,6 @@ function Create() {
     //handle Key Down view tag
     const handleKeyDown = (e) => {
         if (e.key === 'Enter' && e.target.value) {
-            console.log(e.target.value.split(' ').filter((item) => item !== ''));
             setTagList((prev) => {
                 return [...prev, ...e.target.value.split(' ').filter((item) => item !== '')];
             });
