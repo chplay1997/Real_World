@@ -56,7 +56,6 @@ function Create() {
                 return [...prev, ...e.target.value.split(' ').filter((item) => item !== '')];
             });
             setTagListInput('');
-            console.log(tagList);
         }
     };
     return (
