@@ -14,7 +14,8 @@ function Create() {
     const [title, setTitle] = useState(location.state ? location.state.title : '');
     const [description, setDescription] = useState(location.state ? location.state.description : '');
     const [body, setBody] = useState(location.state ? location.state.body : '');
-    const [tagList, setTagList] = useState('');
+    const [tagListInput, setTagListInput] = useState('');
+    const [tagList, setTagList] = useState(location.state ? location.state.tagList : []);
     const [messages, setMessages] = useState('');
 
     //handle click submit
@@ -26,8 +27,8 @@ function Create() {
             : 'https://api.realworld.io/api/articles';
 
         //Filler tag is empty
-        let tagListAll = tagList ? tagList.split(' ').filter((item) => item !== '') : [];
-        tagListAll = location.state ? tagListAll.concat(location.state.tagList) : tagListAll;
+        let tagListAll = tagListInput ? tagListInput.split(' ').filter((item) => item !== '') : [];
+        tagListAll = tagList ? tagListAll.concat(tagList) : tagListAll;
 
         context
             .sendData({
@@ -45,6 +46,18 @@ function Create() {
                 setMessages(err);
                 console.log(err);
             });
+    };
+
+    //handle Key Down view tag
+    const handleKeyDown = (e) => {
+        if (e.key === 'Enter' && e.target.value) {
+            console.log(e.target.value.split(' ').filter((item) => item !== ''));
+            setTagList((prev) => {
+                return [...prev, ...e.target.value.split(' ').filter((item) => item !== '')];
+            });
+            setTagListInput('');
+            console.log(tagList);
+        }
     };
     return (
         <div className="editor-page">
@@ -87,11 +100,14 @@ function Create() {
                                         type="text"
                                         className="form-control"
                                         placeholder="Enter tags"
-                                        value={tagList}
-                                        onChange={(e) => setTagList(e.target.value)}
+                                        value={tagListInput}
+                                        onChange={(e) => {
+                                            setTagListInput(e.target.value);
+                                        }}
+                                        onKeyDown={handleKeyDown}
                                     />
 
-                                    {location.state && <TagList tagList={location.state.tagList} />}
+                                    {<TagList tagList={tagList} setTagList={setTagList} />}
                                 </fieldset>
                                 <button
                                     className="btn btn-lg pull-xs-right btn-primary"
